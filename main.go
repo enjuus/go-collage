@@ -17,7 +17,7 @@ type PixelImage struct {
 
 func mapImages(images map[int]string) map[int]*PixelImage {
 	files := make(map[int]*PixelImage)
-	sqr := int(math.Cbrt(float64(len(images))))
+	sqr := int(math.Round(math.Cbrt(float64(len(images)))))
 	for k, path := range images {
 		files[k] = new(PixelImage)
 		fmt.Println(k, path)
@@ -31,14 +31,16 @@ func mapImages(images map[int]string) map[int]*PixelImage {
 		}
 		x := k - 1
 		if k == 0 {
-			files[k].sp = image.Point{0, 0}
+			files[0].sp = image.Point{0, 0}
 		} else {
-			if k > sqr {
+			if k >= sqr {
 				if k%sqr == 0 {
 					files[k].sp = image.Point{0, files[x].img.Bounds().Dy()}
 				} else {
 					files[k].sp = image.Point{files[x].img.Bounds().Dx(), files[x].img.Bounds().Dy()}
 				}
+			} else {
+				files[k].sp = image.Point{0, files[x].img.Bounds().Dy()}
 			}
 		}
 
@@ -51,9 +53,14 @@ func mapImages(images map[int]string) map[int]*PixelImage {
 func main() {
 	var images = map[int]string{
 		0: "/home/enju/pic/np.jpg",
-		1: "/home/enju/pic/np2.jpg",
-		2: "/home/enju/pic/np2.jpg",
+		1: "/home/enju/pic/np.jpg",
+		2: "/home/enju/pic/np.jpg",
 		3: "/home/enju/pic/np.jpg",
+		4: "/home/enju/pic/np.jpg",
+		5: "/home/enju/pic/np.jpg",
+		6: "/home/enju/pic/np.jpg",
+		7: "/home/enju/pic/np.jpg",
+		8: "/home/enju/pic/np.jpg",
 	}
 
 	files := mapImages(images)
@@ -64,8 +71,7 @@ func main() {
 	rgba := image.NewRGBA(r)
 
 	for _, PxI := range files {
-
-		draw.Draw(rgba, PxI.img.Bounds(), PxI.img, image.Point{0, 0}, draw.Src)
+		draw.Draw(rgba, PxI.rectangle, PxI.img, image.Point{0, 0}, draw.Src)
 	}
 
 	out, err := os.Create("./image.jpg")
