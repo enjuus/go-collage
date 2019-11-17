@@ -4,6 +4,7 @@ import (
 	"image"
 	"image/draw"
 	"image/jpeg"
+	_ "image/png"
 	"math"
 	"os"
 	"sort"
